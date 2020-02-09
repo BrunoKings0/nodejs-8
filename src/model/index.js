@@ -1,13 +1,17 @@
 const fs = require('fs')
 const path = require('path')
-const env = process.env.NODE_ENV || 'development'
+const env = 'test'
+//const env = process.env.NODE_ENV || 'development'
 
 const schema  = require('./schema')
 
-const openDB = () => require(`../../data/database.${env}.json`)
+//const openDB = () => require(`../../data/database.${env}.json`)
 
-const updateDB = (data) => {
-  const pathname = path.join(__dirname, `../../data/database.${env}.json`)
+const openDB = () => JSON.parse(fs.readFileSync(path.join(__dirname, `../../data/database.test.json`)),'utf-8')
+
+
+const updateDB = (data, pathname = path.join(__dirname, `../../data/database.${env}.json`) ) => {
+  //const pathname = path.join(__dirname, `../../data/database.${env}.json`)
 
   try {
     const stringifiedData = JSON.stringify(data, null, 2)
@@ -16,6 +20,7 @@ const updateDB = (data) => {
     return `Couldn't update database.${env}.json`
   }
 }
+
 
 const animals = {
   // Retorna todos os animais na base
@@ -61,6 +66,7 @@ const animals = {
 
   // Remove um registro da base, baseado em um id / chave
   destroy: id => new Promise((resolve) => {
+  
     const db = openDB()
 
     if (db[id]) {
@@ -75,4 +81,7 @@ const animals = {
 }
 
 
-module.exports = { animals }
+module.exports = { 
+  animals,
+  updateDB
+ }
